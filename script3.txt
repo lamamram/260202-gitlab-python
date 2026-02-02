@@ -2,3 +2,8 @@ function_3_1(){
   code31
   end
 }
+
+function_3_2(){
+  code32
+  end
+}
