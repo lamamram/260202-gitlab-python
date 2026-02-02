@@ -1,6 +1,6 @@
 function_2_1(){
   code21
-  end
+  fin
 }
 
 function_2_2(){
