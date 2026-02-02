@@ -33,7 +33,16 @@ git diff HEAD HEAD~1
 
 ---
 
-3. inverser les diff et créer un commit avec ces diffs
+3. appliquer un objet diff au commit courant et créer un commit
+
+```bash
+git diff HEAD HEAD~1 | git apply
+git add . && git commit -m "revert 2nd content"
+```
+
+---
+
+4. c'est ce que fait `git revert`
 
 ```bash
 ## --no-edit : message par défaut
