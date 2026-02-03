@@ -4,5 +4,11 @@ function_1_1(){
 }
 
 function_1_2(){
-  code12_main
+  code12
+  end
+}
+
+function_1_3(){
+  code13
+  end
 }
