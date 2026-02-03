@@ -83,6 +83,9 @@ git graph
 > dit **commit de fusion**
 > qui a 2 parents !! : `git cat-file -p HEAD`
 
+> la stratégie dite `ort` ou `recursive` gère la fusion en cas de **criss cross merge** 
+> qui génère plusieurs ancêtres communs entre les 2 branches **ANTIPATTERN NOTOIRE!!!**
+> `ort` utilise l'algo histogramme le plus puissant pour détecter les conflits
 ---
 
 ### après la fusion
