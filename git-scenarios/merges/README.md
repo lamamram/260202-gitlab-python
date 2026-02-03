@@ -212,6 +212,9 @@ git graph -4
 git branch -d feature2
 ```
 
+> cas particulier: demander soit notre version en cas de conflit : `git merge -X ours feature2`
+> soit la version de l'autre branche en cas de conflit : `git merge -X theirs feature2`
+
 ---
 
 ## cas "Fast-Forward"
