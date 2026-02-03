@@ -2,3 +2,8 @@ function_1_1(){
   code 11_bis
   end
 }
+
+func_f2_1(){
+  codef2
+  end
+}
