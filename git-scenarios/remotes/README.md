@@ -165,7 +165,7 @@ git stash pop
 git config --global merge.ff false
 # mais pas en pull !!! 
 # car pull fait une fusion d' origin/<branch> dans <branch>
-git config --global pull.ff only
+git config --global pull.ff true
 ```
 
 ---
