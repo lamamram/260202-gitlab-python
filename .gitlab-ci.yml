@@ -1,0 +1,8 @@
+# nom du job: arbitraire
+test:
+  # liste de tags à associer avec un runner
+  tags:
+    - formation
+  # liste de commandes à lancer dans un conteneur docker ici
+  script:
+    - echo "Test!"
