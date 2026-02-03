@@ -7,12 +7,7 @@ git init
 git add . && git commit -m "root-commit"
 cat <<EOF > script1.txt
 function1_1(){
-  code1
-  return
-}
-
-function1_2(){
-  code2
+  code1_1
   return
 }
 EOF
@@ -20,16 +15,18 @@ git add . && git commit -m "ajout script1.txt"
 
 cat <<EOF > script2.txt
 function2_1(){
-  code3
-  return
-}
-
-function2_2(){
-  code4
+  code2_1
   return
 }
 EOF
 git add . && git commit -m "ajout script2.txt"
+
+cat <<EOF > script3.txt
+function3_1(){
+  code3_1
+  return
+}
+EOF
 
 ```
 
@@ -52,6 +49,15 @@ ll
 
 ---
 
+### effets du --hard sur les modifications *Untracked*
+
+* `git status`
+
+> REM: le fichier `script3.txt` de status *Untracked* est toujours !!!
+> REM: les écrasements de copie ne concernent que les fichiers committés
+
+---
+
 ### inverser le reset --hard
 
 * les 2 commits ont disparu de *l'historique* MAIS **pas du dépôt** !!
@@ -68,13 +74,33 @@ git reflog
 git reset --hard HEAD@{1}
 
 # OU en utilisant les options avancées du show et le SHELL BASH
-old_head=$(git show ORIG_HEAD --pretty=format:"%h" --no-patch)
-echo "$old_head"
-git reset --hard "$old_head"
+git reset --hard HEAD~2
+old_head_hash=$(git show ORIG_HEAD --pretty=format:"%h" --no-patch)
+echo "ORIG_HEAD == $old_head_hash == HEAD@{1}"
+git reset --hard ORIG_HEAD
 
 ```
 
 ---
+
+### effet sur le reset --hard sur les modifs Modified non committées
+
+```bash
+cat <<EOF > script1.txt
+function1_1(){
+  maj code1_1
+  return
+}
+EOF
+
+git reset --hard HEAD~2
+# ATTENTION: PERTE DE DONNEES !!!
+
+git reset --hard HEAD@{1}
+```
+
+---
+
 
 ### supprimer des commits de l'historique mais laissant intacte la copie de travail
 
@@ -97,43 +123,47 @@ git status
 ```bash
 cat <<EOF > script1.txt
 function1_1(){
-  better_code1
+  maj code1_1
   return
 }
 
 function1_2(){
-  code2
+  code1_2
   return
 }
 EOF
 cat <<EOF > script2.txt
-function2_2(){
-  better_code4
+function2_1(){
+  maj code2_1
   return
 }
 EOF
-git add . && git commit -m "ajout de 2 scripts"
+
+## ATTENTION le script3.txt n'est pas dans votre fonctionnalité
+git add script1.txt script2.txt && git commit -m "ajout des 2 scripts en un commit"
 
 ```
 
-> PAS DE RESET ET PAR SUITE DE REECRITURE DE COMMITS 
-> SUR DES COMMITS DEJA COMMITES
+> IL NE DOIT PAS DE FAIRE DE RESET 
+> SUR DES COMMITS DEJA POUSSES SUR UN DEPOT
 > SUR UNE BRANCHE COMMUNE (main/master)
 
+
+> REM: le reset normal vide de l'index donc 
+> REM: on oublie qui sont les fichiers qu'on avait ajouté en premier lieu
+> REM: PB si la copie de travail bcp de modifs concernant des fonctionnalités différentes
+
 ---
 
-### pas d'effet du reset sur les fichiers Untracked
+### reset --soft
 
 ```bash
-echo "new_file" > new_file.txt
-
-git reset --hard HEAD~1
-
-# new_file est toujours là !!
+git reset --soft HEAD~1
+# on voit les fichiers concernés par le commit supprimé
 git status
-```
 
----
+git commit -m "ajout des 2 scripts en un commit"
+```
 
 ### reset --soft: effet curieux possibles
 
@@ -153,18 +183,16 @@ git status
 * assis sur un commit ayant ajouté une modif M sur le même fichier
 
 ```bash
-# remettre en jeu le commit des scripts
-git reset --hard HEAD@{1}
 
 # modif M dans un script2.txt
 cat <<EOF >> script2.txt
 
-function2_3(){
-  code5
+function2_2(){
+  code2_2
   return
 }
 EOF
-git add script2.txt && git commit -m "ajout new_file.txt + MAJ script2.txt"
+git add script2.txt && git commit -m "MAJ script2.txt"
 ```
 
 --- 
@@ -173,8 +201,8 @@ git add script2.txt && git commit -m "ajout new_file.txt + MAJ script2.txt"
 # nouvelle modif non commitée
 cat <<EOF >> script2.txt
 
-function2_4(){
-  code6
+function2_3(){
+  code2_3
   return
 }
 EOF
@@ -199,6 +227,6 @@ git add script2.txt && git commit -m "ajout new_file.txt + vrai MAJ script2.txt"
 
 > `git reset HEAD~1 && git add . && git commit -m "..."`: aurait fait la même chose
 > `git add script2.txt && git commit --amend -m "..."`: aurait fait la même chose
-> on utiliser le `soft` quand la copie de travail contient bcp de modifs non commitées
+> on utilise le `soft` quand la copie de travail contient bcp de modifs non commitées
 > sinon il faut vraiment une **raison impérieuse de conserver l'index** !!!
 > correction critique sur une branche prod par ex

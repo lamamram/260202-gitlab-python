@@ -7,24 +7,14 @@
 git init
 cat <<EOF > script1.txt
 function1_1(){
-  code1
-  return
-}
-
-function1_2(){
-  code2
+  code1_1
   return
 }
 EOF
 git add . && git commit -m "root-commit"
 cat <<EOF > script2.txt
 function2_1(){
-  code3
-  return
-}
-
-function2_2(){
-  code4
+  code2_1
   return
 }
 EOF
@@ -50,12 +40,6 @@ function1_1(){
 }
 weird
 
-function1_2(){
-  code2
-  weird
-  return
-}
-
 weird_function(){
   weird
 }
@@ -69,14 +53,9 @@ EOF
 cat <<EOF > script2.txt
 
 fuegergenction2_1(){
-  code3
+  code2_1
   retergerurn
 }
-
-function2_e2(){
-  code4
-  return
-}erg
 EOF
 
 ```
@@ -103,14 +82,9 @@ git checkout -- script*.txt
 cat <<EOF > script2.txt
 
 fuegergenction2_1(){
-  code3
+  code2_1
   retergerurn
 }
-
-function2_e2(){
-  code4
-  return
-}erg
 EOF
 
 ```
@@ -125,7 +99,6 @@ git checkout -- script2.txt
 git reset -- script2.txt
 git checkout -- script2.txt
 ```
-
 
 
 ---
@@ -154,7 +127,6 @@ rm -- -i
 ```bash
 cat <<EOF > script1.txt
 function1_1(){
-  code1
   return
 }
 EOF
@@ -173,12 +145,7 @@ git checkout -- script1.txt
 ```bash
 cat <<EOF > script2.txt
 function2_1(){
-  code3_bis
-  return
-}
-
-function2_2(){
-  code4
+  maj code2_1
   return
 }
 EOF
@@ -280,6 +247,14 @@ cat <<EOF > .vscode/settings.json
   "tabSize": 4
 }
 EOF
+cat <<EOF >> script1.txt
+
+function1_2(){
+  code1_2
+  return
+}
+EOF
+
 git add . && git commit -m "commit utile au projet mais ajoutant des configs inutiles"
 ```
 
@@ -304,18 +279,18 @@ git add .gitignore && commit -m "suppression de .vscode"
 * `git mv` renomme/déplace dans la copie de travail et ajoute un ordre de renommage/déplacement dans l'iINDEX
 
 ```bash
-cat <<EOF > wrong_script.txt
+cat <<EOF > bad_name_script.txt
 valid_function(){
   valid_code
   return
 }
 EOF
-git add . && git commit -m "rehabilitation de wrong_script.txt"
+git add . && git commit -m "rehabilitation de bad_name_script.txt"
 
 # renommage
-git mv wrong_script.txt valid_script.txt
+git mv bad_name_script.txt good_name_script.txt
 
 # observer le statut particulier
 git status
-git commit -m "renommage du wrong_script.txt en valid_script.txt"
+git commit -m "renommage du bad_name_script en good_name_script"
 ```

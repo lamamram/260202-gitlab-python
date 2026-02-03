@@ -113,10 +113,15 @@ git config --global --unset <section>.<key>
 ### ajout d'un nouveau fichier dans la copie de travail
 
 ```bash
-# créer un fichier avec un contenu
-echo "content" > content.txt
+# copier et coller toutes les lignes depuis cat => EOF dans git-bash
+cat <<EOF > script1.txt
+function1_1(){
+  code1_1
+  return
+}
+EOF
 
-# regarder le statut du fichier content.txt
+# regarder le statut du fichier script1.txt
 git status
 # version raccourcie
 git status -s
@@ -137,9 +142,9 @@ git status -s
   + l'index est stocké dans `.git/index` *non éditable*
 
 ```bash
-git add content.txt
+git add script1.txt
 
-# observer le changement de statut de content.txt
+# observer le changement de statut de script1.txt
 git status
 ```
 
@@ -153,9 +158,9 @@ git commit
 # fermer l'éditeur sans message => ABORT !!!
 
 # avec message
-git commit -m "ajout du fichier content.txt au dépôt"
+git commit -m "ajout du fichier script1.txt au dépôt"
 
-# observer le statut de content.txt et surtout son absence de statut !!
+# observer le statut de script1.txt et surtout son absence de statut !!
 git status
 ```
 
@@ -171,12 +176,25 @@ git status
 ### autre fichier + nouvelle modification sur le fichier existant
 
 ```bash
-# création du fichier new_file.txt
-# ET ajouter 3 lignes dans content.txt 
-echo "new_file" > new_file.txt
-echo -e "\nnew content\n" >> content.txt
+# création du nouveau fichier script2.txt
+# et mettre à jour script1.txt
+cat <<EOF > script2.txt
+function2_1(){
+  code2_1
+  return
+}
+EOF
 
-# observer le statut du fichier content.txt
+cat <<EOF > script1.txt
+import script2
+
+function1_1(){
+  code1_1
+  use code2_1
+  return
+}
+EOF
+
 git status
 ```
 
@@ -192,16 +210,18 @@ git status
 ### ajouter plusieurs fichiers à l'index
 
 ```bash
-git add content.txt
-git add new_file.txt
-git README.md
+git add script1.txt
+git add script2.txt
+git add README.md
 
-# MIEUX
-git add content.txt new_file.txt README.md
-# TOUTES les modifications mais voulions nous vraiment tout ajouter ?
+# OU MIEUX
+git add script1.txt script2.txt README.md
+
+# TOUTES les modifications dans la copie de travail: 
+# il faut une copie suffisamment propre
 git add .
 
-git commit -m "ajout new_file.txt + nouveau contenu dans content.txt"
+git commit -m "ajouts des scripts + README"
 ```
 
 ---
@@ -213,8 +233,8 @@ git commit -m "ajout new_file.txt + nouveau contenu dans content.txt"
   + mais je ne veux ajouter que 10 fichiers
 
 * solutions efficaces:
-  1. avec un outil graphique permettant les sélections *(shift + click)*
-  2. ou `git add -i` en terminal *(pas parfait)*
+  1. avec un outil graphique permettant les sélections multiples *(shift + click)*
+  2. ou `git add -i` dans le terminal *(pas parfait)*
 
 ---
 
