@@ -2,3 +2,7 @@ function_1_1(){
   code 11_bis
   end
 }
+
+function_1_2(){
+  code12_main
+}
