@@ -1,7 +1,10 @@
-# clé en dehors des jobs est utilisée par chaque job 
-# sauf si la même clé est redéfinie dans le job
-# image par défaut du pipeline
 image: python:3.14.2-slim-trixie
+
+# liste arbitraire des étapes principales du pipeline dans l'ordre d'exécution
+# REM: si plusieurs jobs appartiennent à la même étape, ils sont exécutés en parallèle
+stages:
+  - building
+  - testing
 
 # 1. créer un job qui installe les dépendances, dépendances mis en cache avec gitlab
 # 2. on n'exécute ce job que si les dépendances n'ont pas changé
@@ -9,12 +12,15 @@ image: python:3.14.2-slim-trixie
 # 3. accrocher le cache dans le job de test
 
 deps:
+  # association du job à une étape
+  stage: building
   tags:
     - formation  
   script:
     - echo "deps"
 
 test:
+  stage: testing
   tags:
     - formation
   before_script:
