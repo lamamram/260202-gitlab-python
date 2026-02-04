@@ -9,5 +9,13 @@ debug.log
 # !.vagrant/debug.log
 [sS]amples/
 
+__pycache__/
+*.pyc
+.env
+.vscode/
+.DS_Store
+*.db
+.pytest_cache/
+
 
 
