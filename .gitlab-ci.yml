@@ -1,9 +1,25 @@
-# nom du job: arbitraire
+# clé en dehors des jobs est utilisée par chaque job 
+# sauf si la même clé est redéfinie dans le job
+# image par défaut du pipeline
+image: python:3.14.2-slim-trixie
+
+# 1. créer un job qui installe les dépendances, dépendances mis en cache avec gitlab
+# 2. on n'exécute ce job que si les dépendances n'ont pas changé
+# 2.bis. au cas où le cache est supprimé, on peut le regénérer manuellement
+# 3. accrocher le cache dans le job de test
+
+deps:
+  tags:
+    - formation  
+  script:
+    - echo "deps"
+
 test:
-  # liste de tags à associer avec un runner
   tags:
     - formation
-  # liste de commandes à lancer dans un conteneur docker ici
+  before_script:
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install -r app/requirements.txt
   script:
-    - echo "Test!"
-    - ls -al
+    - pytest
