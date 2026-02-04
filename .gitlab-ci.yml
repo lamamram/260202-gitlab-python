@@ -1,7 +1,5 @@
 image: python:3.14.2-slim-trixie
 
-# liste arbitraire des étapes principales du pipeline dans l'ordre d'exécution
-# REM: si plusieurs jobs appartiennent à la même étape, ils sont exécutés en parallèle
 stages:
   - building
   - testing
@@ -12,20 +10,36 @@ stages:
 # 3. accrocher le cache dans le job de test
 
 deps:
-  # association du job à une étape
   stage: building
   tags:
     - formation  
   script:
-    - echo "deps"
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install -r app/requirements.txt
+  cache:
+    # nommer le cache selon la branche courante (ex: dépendance en développement)
+    key: "py-deps-$CI_COMMIT_BRANCH"
+    # dossier à mettre en cache
+    paths:
+      - venv/
+    # ici on veut uniquement (re)générer le cache
+    policy: push
+    
 
 test:
   stage: testing
   tags:
     - formation
   before_script:
-    - python -m venv venv
     - source venv/bin/activate
-    - pip install -r app/requirements.txt
   script:
     - pytest
+  cache:
+    key: "py-deps-$CI_COMMIT_BRANCH"
+    # en réalité, gitlab n'installe pas le code dans le conteneur à chaque fois
+    # il réutilise le contexte du job précédent, et il exécute la commande git clean -f -x (untracked + ignored)
+    # le cache qu'on installe est par défaut en unracked => le clean dégage le cache !!!
+    # => untracked: true préserve le cache
+    untracked: true
+    policy: pull
