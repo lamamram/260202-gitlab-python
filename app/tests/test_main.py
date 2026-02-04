@@ -129,7 +129,7 @@ def test_update_user(test_client):
     assert data["name"] == update_data["name"]
     assert data["age"] == update_data["age"]
 
-@pytest.mark.skip(reason="Delete user test is currently skipped")
+# @pytest.mark.skip(reason="Delete user test is currently skipped")
 def test_delete_user(test_client):
     # Create a user first
     user_data = {"name": "Test User 5", "email": generate_unique_email(), "age": 50}
