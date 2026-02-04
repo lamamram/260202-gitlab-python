@@ -236,3 +236,28 @@ def test_list_employees_with_pagination_limit(test_client, setup_database, db_se
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 2
+
+def test_employee_id(test_client, setup_database, db_session):
+    """Test GET /employees/:id returns employee object with correct ID"""
+    # Arrange - Create a user and an employee
+    from app.models.user import User
+    from app.models.employee import Employee
+
+    user = User(name="Test User", email=generate_unique_email(), age=30)
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+
+    employee = Employee(full_name="John Doe", seniority=5, user_id=user.id)
+    db_session.add(employee)
+    db_session.commit()
+    db_session.refresh(employee)
+
+    # Act
+    response = test_client.get(f"/employees/{employee.id}")
+
+    # Assert
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, dict)
+    assert data["id"] == employee.id
