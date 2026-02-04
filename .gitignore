@@ -16,6 +16,6 @@ __pycache__/
 .DS_Store
 *.db
 .pytest_cache/
-
+reports/
 
 
