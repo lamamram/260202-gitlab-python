@@ -24,3 +24,4 @@ async def get_employee(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
+

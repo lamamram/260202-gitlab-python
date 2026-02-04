@@ -3,6 +3,23 @@ image: "$CI_REGISTRY_IMAGE/python:$PYTHON_TAG"
 variables:
   PYTHON_TAG: 3.14.2-slim-trixie
 
+## définir les règles d'exécution du pipeline
+workflow:
+  rules:
+    # $CI_PIPELINE_SOURCE => type de déclenchement
+    # WARNING: les pipelines merge requests changent le workspace à chaque pipeline, 
+    # donc on ne peut pas utiliser le cache sans le regérérer à chaque pipeline => changes: ne fonctionne pas !!!
+    
+    # PIS ALLER: => pas de pipeline merge request
+    # pipeline de type push classique mais je vérifie qu'on ait une MR sur la branche courante
+    # if: $CI_OPEN_MERGE_REQUESTS dans test
+    # on préserve les ressources du CICD mais on perd l'historique des pipelines dans l'interface MR
+
+
+    - if: $CI_PIPELINE_SOURCE != "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_COMMIT_BRANCH == "main"
+
 stages:
   - building
   - testing
@@ -17,6 +34,7 @@ deps:
     - python -m venv venv
     - source venv/bin/activate
     - pip install -r app/requirements.txt
+    - pip install -r app/requirements-dev.txt
   cache:
     key: "py-deps-$CI_COMMIT_BRANCH"
     paths:
@@ -25,6 +43,7 @@ deps:
   rules:
     - changes:
         - app/requirements.txt
+        - app/requirements-dev.txt
     - if: $TRIGGER_CACHE == "on"
      
 test:
@@ -34,17 +53,28 @@ test:
   before_script:
     - source venv/bin/activate
   script:
-    - pytest --junitxml=reports/junit.xml
+    # >: convertie les sauts de lignes en " "
+    - >
+      pytest 
+      --junitxml=reports/junit.xml 
+      --cov=app 
+      --cov-report=term 
+      --cov-report=xml:reports/coverage.xml
+  coverage: /TOTAL\s+\d+\s+\d+\s+(\d+%)/
   artifacts:
     when: always
     access: all
     expire_in: "1 hour"
     paths:
-      - reports/junit.xml
+      - reports/coverage.xml
     reports:
       junit: reports/junit.xml
-      
+      coverage_report:
+        coverage_format: cobertura
+        path: reports/coverage.xml 
   cache:
     key: "py-deps-$CI_COMMIT_BRANCH"
     untracked: true
     policy: pull
+  rules:
+    - if: $CI_OPEN_MERGE_REQUESTS
