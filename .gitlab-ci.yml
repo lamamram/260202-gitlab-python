@@ -18,13 +18,16 @@ deps:
     - source venv/bin/activate
     - pip install -r app/requirements.txt
   cache:
-    # nommer le cache selon la branche courante (ex: dépendance en développement)
     key: "py-deps-$CI_COMMIT_BRANCH"
-    # dossier à mettre en cache
     paths:
       - venv/
-    # ici on veut uniquement (re)générer le cache
     policy: push
+  # règles des rules: liste des règles
+  # 1. chaque règle vraie permet d'exécuter le job (OU)
+  # 2. un règle est un ensemble de clauses: toutes les clauses doivent être vraies pour que la règle soit vraie (ET)
+  rules:
+    - changes:
+        - app/requirements.txt
     
 
 test:
@@ -37,9 +40,5 @@ test:
     - pytest
   cache:
     key: "py-deps-$CI_COMMIT_BRANCH"
-    # en réalité, gitlab n'installe pas le code dans le conteneur à chaque fois
-    # il réutilise le contexte du job précédent, et il exécute la commande git clean -f -x (untracked + ignored)
-    # le cache qu'on installe est par défaut en unracked => le clean dégage le cache !!!
-    # => untracked: true préserve le cache
     untracked: true
     policy: pull
