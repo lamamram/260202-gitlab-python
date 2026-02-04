@@ -41,10 +41,7 @@ test:
     expire_in: "1 hour"
     paths:
       - reports/junit.xml
-    # section pour des rapports de tests attendus par gitlab (test, coverage, code quality, ...)
-    # au format attendu par gitlab
     reports:
-      # parsé dans l'interface des pipelines, section tests
       junit: reports/junit.xml
       
   cache:
