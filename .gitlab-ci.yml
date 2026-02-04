@@ -12,7 +12,9 @@ stages:
 deps:
   stage: building
   tags:
-    - formation  
+    - formation
+  variables:
+    TRIGGER_CACHE: "on"
   script:
     - python -m venv venv
     - source venv/bin/activate
@@ -22,12 +24,12 @@ deps:
     paths:
       - venv/
     policy: push
-  # règles des rules: liste des règles
-  # 1. chaque règle vraie permet d'exécuter le job (OU)
-  # 2. un règle est un ensemble de clauses: toutes les clauses doivent être vraies pour que la règle soit vraie (ET)
   rules:
     - changes:
         - app/requirements.txt
+    # règle manuelle utilisant une variable custom à manipuler manuellement
+    - if: $TRIGGER_CACHE == "on"
+     
     
 
 test:
