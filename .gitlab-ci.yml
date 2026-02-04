@@ -1,4 +1,4 @@
-image: "python:$PYTHON_TAG"
+image: "gitlab.lan.fr:5050/formation/dev/python:$PYTHON_TAG"
 
 variables:
   PYTHON_TAG: 3.14.2-slim-trixie
