@@ -129,6 +129,7 @@ def test_update_user(test_client):
     assert data["name"] == update_data["name"]
     assert data["age"] == update_data["age"]
 
+
 @pytest.mark.skip(reason="Delete user test is currently skipped")
 def test_delete_user(test_client):
     # Create a user first
@@ -144,4 +145,3 @@ def test_delete_user(test_client):
     # Verify user is deleted
     get_response = test_client.get(f"/users/{user_id}")
     assert get_response.status_code == 404
-

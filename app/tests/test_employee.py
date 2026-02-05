@@ -8,7 +8,6 @@ from app.models.database import Base
 import uuid
 import time
 
-
 # Create test database
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
 engine = create_engine(
@@ -236,6 +235,7 @@ def test_list_employees_with_pagination_limit(test_client, setup_database, db_se
     assert response.status_code == 200
     data = response.json()
     assert len(data) == 2
+
 
 def test_employee_id(test_client, setup_database, db_session):
     """Test GET /employees/:id returns employee object with correct ID"""
