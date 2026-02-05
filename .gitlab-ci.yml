@@ -23,6 +23,15 @@ workflow:
 stages:
   - building
   - testing
+  - reviewing
+
+include:
+  - component: gitlab.lan.fr/formation/gitlab-opencode/opencode@main
+    inputs:
+      config_dir: ${CI_PROJECT_DIR}/.opencode
+      stage: reviewing
+      auth_json: $OPENCODE_AUTH_JSON
+      message: "give me your version on one word"
 
 deps:
   stage: building
