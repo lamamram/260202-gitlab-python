@@ -78,3 +78,4 @@ test:
     policy: pull
   rules:
     - if: $CI_OPEN_MERGE_REQUESTS
+    - if: $CI_PIPELINE_SOURCE == "push"
