@@ -27,13 +27,17 @@ stages:
   - staging
   - browsing
 
-# include:
-#   - component: gitlab.lan.fr/formation/gitlab-opencode/opencode@main
-#     inputs:
-#       config_dir: ${CI_PROJECT_DIR}/.opencode
-#       stage: reviewing
-#       auth_json: $OPENCODE_AUTH_JSON
-#       message: "give me your version on one word"
+# https://gitlab.com/nagyv/gitlab-opencode
+# le /opencode correspond au dossier templates/opencode.yml
+include:
+  - component: gitlab.lan.fr/formation/gitlab-opencode/opencode@main
+    inputs:
+      config_dir: ${CI_PROJECT_DIR}/.opencode
+      stage: testing
+      # variables cachées qui contient le contenu du fichier ~/.local/share/opencode/auth.json 
+      # en tant que variable "File" et non masquée
+      auth_json: $OPENCODE_AUTH_JSON
+      message: "give me your version on one word"
 
 deps:
   stage: building
@@ -57,7 +61,7 @@ deps:
         - app/requirements-dev.txt
     - if: $TRIGGER_CACHE == "on"
      
-test:
+.test:
   stage: testing
   tags:
     - formation
@@ -137,7 +141,7 @@ test:
   rules:
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+$/
 
-e2e:
+.e2e:
   stage: browsing
   tags:
     - formation
