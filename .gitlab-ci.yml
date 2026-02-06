@@ -1,28 +1,23 @@
+# préfixer une structure yaml avec "." désactive la structure
+# &truc est une référence à une structure
+.mr_rules: &mr_rules
+  - if: $CI_OPEN_MERGE_REQUESTS
+  - if: $CI_COMMIT_BRANCH == "main"
+
 image: "$CI_REGISTRY_IMAGE/python:$PYTHON_TAG"
 
 variables:
   PYTHON_TAG: 3.14.2-slim-trixie
 
-## définir les règles d'exécution du pipeline
 workflow:
   rules:
-    # $CI_PIPELINE_SOURCE => type de déclenchement
-    # WARNING: les pipelines merge requests changent le workspace à chaque pipeline, 
-    # donc on ne peut pas utiliser le cache sans le regérérer à chaque pipeline => changes: ne fonctionne pas !!!
-    
-    # PIS ALLER: => pas de pipeline merge request
-    # pipeline de type push classique mais je vérifie qu'on ait une MR sur la branche courante
-    # if: $CI_OPEN_MERGE_REQUESTS dans test
-    # on préserve les ressources du CICD mais on perd l'historique des pipelines dans l'interface MR
-
-
     - if: $CI_PIPELINE_SOURCE != "merge_request_event"
     - if: $CI_PIPELINE_SOURCE == "push"
-    - if: $CI_COMMIT_BRANCH == "main"
 
 stages:
   - building
   - testing
+  - qualifying
   - reviewing
 
 # include:
@@ -62,7 +57,6 @@ test:
   before_script:
     - source venv/bin/activate
   script:
-    # >: convertie les sauts de lignes en " "
     - >
       pytest 
       --junitxml=reports/junit.xml 
@@ -85,6 +79,24 @@ test:
     key: "py-deps-$CI_COMMIT_BRANCH"
     untracked: true
     policy: pull
-  rules:
-    - if: $CI_OPEN_MERGE_REQUESTS
-    - if: $CI_PIPELINE_SOURCE == "push"
+  # Alias yaml: accroche le contenu de &mr_rules à la clé rules
+  rules: *mr_rules
+
+sonar:
+  stage: qualifying
+  tags:
+    - formation
+  image:
+    name: sonarsource/sonar-scanner-cli:12
+    # désactiver l'entrypoint de l'image (commande par défaut) qui perturbe le script ci-dessous
+    entrypoint: [""]
+  script:
+    # doc: https://docs.sonarsource.com/sonarqube-server/analyzing-source-code/analysis-parameters/parameters-not-settable-in-ui
+    - >
+      sonar-scanner
+      -Dsonar.projectKey=dev
+      -Dsonar.sources=./app
+      -Dsonar.sca.exclusions=./app/tests/**/*.py
+      -Dsonar.host.url=http://gitlab.lan.fr:9000
+      -Dsonar.login=$SONAR_TOKEN
+  rules: *mr_rules
