@@ -2,6 +2,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.models.database import Base
+from selenium import webdriver
 
 # Create test database
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
@@ -48,3 +49,15 @@ def db_session():
         yield db
     finally:
         db.close()
+
+
+@pytest.fixture
+def selenium():
+    options = webdriver.FirefoxOptions()
+    # pas besoin de GUI => un conteneur docker n'a pas de serveur X11
+    options.add_argument("--headless")
+    # appeler le serveur selenium
+    return webdriver.Remote(
+        command_executor="http://selenium-server:4444/wd/hub",
+        options=options
+    )
