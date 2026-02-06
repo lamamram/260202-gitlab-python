@@ -34,14 +34,4 @@ services:
   - côté client selenium => utiiser le nom du conteneur comme url !
   - utiliser l'option **headless**
 
-
-## création & exécution des scripts
-
-* avec PHPUnit et la librairie PHP selenium
-
-```bash
-cd project
-composer require --dev facebook/webdriver
-```
-
 * attention au scope: différencier les tests E2E et les tests Unit et IT

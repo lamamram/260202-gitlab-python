@@ -89,10 +89,8 @@ sonar:
     - formation
   image:
     name: sonarsource/sonar-scanner-cli:12
-    # désactiver l'entrypoint de l'image (commande par défaut) qui perturbe le script ci-dessous
     entrypoint: [""]
   script:
-    # doc: https://docs.sonarsource.com/sonarqube-server/analyzing-source-code/analysis-parameters/parameters-not-settable-in-ui
     - >
       sonar-scanner
       -Dsonar.projectKey=dev
@@ -114,28 +112,24 @@ package:
   stage: packaging
   script:
     - tar cvzf dev.tar.gz $CI_PROJECT_DIR
-    # utiliser le package générique de gitlab pour hoster des builds
     - >
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" 
       -k
       --upload-file dev.tar.gz
       "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/dev/${CI_COMMIT_TAG}/dev.tar.gz"
   rules:
-    # forme de tag PROTEGEE
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+$/
 
 trigger_staging:
   stage: staging
-  # appeler un autre pipeline
   trigger:
     project: formation/ops
     branch: main
-    # cet appel est bloquant jusqu'à la fin du pipeline et en succès
     strategy: depend
   environment:
-    # termes consacrés:  staging, preprod, prod => utile pour le Value Stream Map de gitlab
     name: staging
     url: https://dawan.fr
   rules:
-    # forme de tag PROTEGEE
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+$/
+
+
