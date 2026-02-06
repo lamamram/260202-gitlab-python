@@ -96,7 +96,9 @@ sonar:
       sonar-scanner
       -Dsonar.projectKey=dev
       -Dsonar.sources=./app
-      -Dsonar.sca.exclusions=./app/tests/**/*.py
+      -Dsonar.exclusions=app/tests/**
       -Dsonar.host.url=http://gitlab.lan.fr:9000
       -Dsonar.login=$SONAR_TOKEN
+      -Dsonar.python.coverage.reportPaths=reports/coverage.xml
+      -Dsonar.qualitygate.wait=true
   rules: *mr_rules
